@@ -33,3 +33,4 @@ $string['enterid'] = 'Enter an ID';
 $string['enterclass'] = 'Enter a class';
 $string['link'] = 'Link';
 $string['advanced'] = 'Advanced';
+$string['privacy:metadata'] = 'The atto_linkadv plugin does not store any personal data.';
