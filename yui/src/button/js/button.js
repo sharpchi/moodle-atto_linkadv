@@ -38,23 +38,23 @@ var COMPONENTNAME = 'atto_linkadv',
         ADVANCED: 'ADVANCED'
     },
     CSS = {
-        URL_INPUT: 'atto_linkadv_url_entry',
+        URLINPUT: 'atto_linkadv_url_entry',
         NEWWINDOW: 'atto_linkadv_openinnewwindow',
-        ID_INPUT: 'atto_linkadv_id_entry',
-        CLASS_INPUT: 'atto_linkadv_class_entry',
+        IDINPUT: 'atto_linkadv_id_entry',
+        CLASSINPUT: 'atto_linkadv_class_entry',
         LINK: TABS.LINK.toLowerCase(),
         ADVANCED: TABS.ADVANCED.toLowerCase(),
         FILEPICKER: 'atto_linkadv_filepicker'
     },
     SELECTORS = {
-        URL_INPUT: '.' + CSS.URL_INPUT,
+        URLINPUT: '.' + CSS.URLINPUT,
         NEWWINDOW: '.' + CSS.NEWWINDOW,
-        ID_INPUT: '.' + CSS.ID_INPUT,
-        CLASS_INPUT: '.' + CSS.CLASS_INPUT,
+        IDINPUT: '.' + CSS.IDINPUT,
+        CLASSINPUT: '.' + CSS.CLASSINPUT,
         FILEPICKER: '.' + CSS.FILEPICKER
     },
     TEMPLATE = '' +
-    '<form class="mform atto_form atto_linkadv" id="{{elementid}}_atto_linkadv_form">' +
+    '<form class="atto_form">' +
         '<ul class="root nav nav-tabs" role="tablist">' +
             '<li data-type="{{CSS.LINK}}" class="nav-item">' +
                 '<a class="nav-link active" href="#{{elementid}}_{{CSS.LINK}}" role="tab" data-toggle="tab">' +
@@ -69,30 +69,41 @@ var COMPONENTNAME = 'atto_linkadv',
         '</ul>' +
         '<div class="root tab-content">' +
             '<div data-type="{{CSS.LINK}}" class="tab-pane active" id="{{elementid}}_{{CSS.LINK}}">' +
-                '<label for="{{elementid}}_atto_linkadv_url_entry">{{get_string "enterurl" component}}</label>' +
-                '<input class="fullwidth {{CSS.URL_INPUT}}" ' +
-                    'type="url" id="{{elementid}}_atto_linkadv_url_entry" size="32"/><br/>' +
-
-                // Add the repository browser button.
                 '{{#if showFilepicker}}' +
-                    '<button class="{{CSS.FILEPICKER}}">{{get_string "browserepositories" component}}</button>' +
-                    '<br/>' +
+                    '<label for="{{elementid}}_atto_linkadv_urlentry">{{get_string "enterurl" component}}</label>' +
+                    '<div class="input-group input-append w-100 mb-1">' +
+                        '<input class="form-control url {{CSS.URLINPUT}}" type="url" ' +
+                        'id="{{elementid}}_atto_linkadv_urlentry"/>' +
+                        '<span class="input-group-append">' +
+                            '<button class="btn btn-secondary {{CSS.FILEPICKER}}" type="button">' +
+                            '{{get_string "browserepositories" component}}</button>' +
+                        '</span>' +
+                    '</div>' +
+                '{{else}}' +
+                    '<div class="mb-1">' +
+                        '<label for="{{elementid}}_atto_linkadv_urlentry">{{get_string "enterurl" component}}</label>' +
+                        '<input class="form-control fullwidth url {{CSS.URLINPUT}}" type="url" ' +
+                        'id="{{elementid}}_atto_linkadv_urlentry" size="32"/>' +
+                    '</div>' +
                 '{{/if}}' +
-                '<input type="checkbox" class="{{CSS.NEWWINDOW}}" id="{{elementid}}_{{CSS.NEWWINDOW}}"/>' +
-                '<label class="sameline" for="{{elementid}}_{{CSS.NEWWINDOW}}">' +
-                    '{{get_string "openinnewwindow" component}}</label>' +
+                '<div class="form-check">' +
+                    '<input type="checkbox" class="form-check-input {{CSS.NEWWINDOW}}" id="{{elementid}}_{{CSS.NEWWINDOW}}"/>' +
+                    '<label class="form-check-label" for="{{elementid}}_{{CSS.NEWWINDOW}}">' +
+                    '{{get_string "openinnewwindow" component}}' +
+                    '</label>' +
+                '</div>' +
             '</div>' +
             '<div data-type="{{CSS.ADVANCED}}" class="tab-pane" id="{{elementid}}_{{CSS.ADVANCED}}">' +
-                '<label for="{{elementid}}_{{CSS.ID_INPUT}}">{{get_string "enterid" component}}</label>' +
-                '<input class="fullwidth {{CSS.ID_INPUT}}" type="text" id="{{elementid}}_{{CSS.ID_INPUT}}" size="32" />' +
-                '<label for="{{elementid}}_{{CSS.CLASS_INPUT}}">{{get_string "enterclass" component}}</label>' +
-                '<input class="fullwidth {{CSS.CLASS_INPUT}}" ' +
-                    'type="text" id="{{elementid}}_{{CSS.CLASS_INPUT}}" size="32" />' +
+                '<label for="{{elementid}}_{{CSS.IDINPUT}}">{{get_string "enterid" component}}</label>' +
+                '<input class="form-control fullwidth {{CSS.IDINPUT}}" type="text" id="{{elementid}}_{{CSS.IDINPUT}}" />' +
+                '<label for="{{elementid}}_{{CSS.CLASSINPUT}}">{{get_string "enterclass" component}}</label>' +
+                '<input class="form-control fullwidth {{CSS.CLASSINPUT}}" ' +
+                    'type="text" id="{{elementid}}_{{CSS.CLASSINPUT}}" />' +
             '</div>' +
         '</div>' +
         '<div class="mdl-align">' +
             '<br/>' +
-            '<button class="submit" type="submit">{{get_string "createlink" component}}</button>' +
+            '<button class="btn btn-secondary submit" type="submit">{{get_string "createlink" component}}</button>' +
         '</div>' +
     '</form>';
 
@@ -154,8 +165,8 @@ Y.namespace('M.atto_linkadv').Button = Y.Base.create('button', Y.M.editor_atto.E
         var dialogue = this.getDialogue({
             headerContent: M.util.get_string('createlink', COMPONENTNAME),
             focusAfterHide: true,
-            width: 660,
-            focusOnShowSelector: SELECTORS.URL_INPUT
+            width: 'auto',
+            focusOnShowSelector: SELECTORS.URLINPUT
         });
 
         // Set the dialogue content, and then show the dialogue.
@@ -196,7 +207,7 @@ Y.namespace('M.atto_linkadv').Button = Y.Base.create('button', Y.M.editor_atto.E
             id = anchornode.getAttribute('id');
             aclass = anchornode.getAttribute('class');
             if (url !== '') {
-                this._content.one(SELECTORS.URL_INPUT).setAttribute('value', url);
+                this._content.one(SELECTORS.URLINPUT).setAttribute('value', url);
             }
             if (target === '_blank') {
                 this._content.one(SELECTORS.NEWWINDOW).setAttribute('checked', 'checked');
@@ -207,10 +218,10 @@ Y.namespace('M.atto_linkadv').Button = Y.Base.create('button', Y.M.editor_atto.E
                 if (id.startsWith('yui_')) {
                     id = '';
                 }
-                this._content.one(SELECTORS.ID_INPUT).setAttribute('value', id);
+                this._content.one(SELECTORS.IDINPUT).setAttribute('value', id);
             }
             if (aclass !== '') {
-                this._content.one(SELECTORS.CLASS_INPUT).setAttribute('value', aclass);
+                this._content.one(SELECTORS.CLASSINPUT).setAttribute('value', aclass);
             }
         }
     },
@@ -257,13 +268,13 @@ Y.namespace('M.atto_linkadv').Button = Y.Base.create('button', Y.M.editor_atto.E
             focusAfterHide: null
         }).hide();
 
-        input = this._content.one(SELECTORS.URL_INPUT);
+        input = this._content.one(SELECTORS.URLINPUT);
         value = input.get('value');
 
-        id = this._content.one(SELECTORS.ID_INPUT);
+        id = this._content.one(SELECTORS.IDINPUT);
         idvalue = id.get('value');
 
-        aclass = this._content.one(SELECTORS.CLASS_INPUT);
+        aclass = this._content.one(SELECTORS.CLASSINPUT);
         aclassvalue = aclass.get('value');
         if (idvalue.startsWith('yui_')) {
             idvalue = '';
@@ -408,10 +419,14 @@ Y.namespace('M.atto_linkadv').Button = Y.Base.create('button', Y.M.editor_atto.E
      * @private
      */
     _getDialogueContent: function() {
-        var canShowFilepicker = this.get('host').canShowFilepicker('link');
-        this._content = Y.Node.create(
-                Y.Handlebars.compile(TEMPLATE)(this._getContext())
-            );
+        var canShowFilepicker = this.get('host').canShowFilepicker('link'),
+            template = Y.Handlebars.compile(TEMPLATE);
+
+        this._content = Y.Node.create(template({
+            showFilepicker: canShowFilepicker,
+            component: COMPONENTNAME,
+            CSS: CSS
+        }));
 
         this._content.one('.submit').on('click', this._setLink, this);
         if (canShowFilepicker) {
