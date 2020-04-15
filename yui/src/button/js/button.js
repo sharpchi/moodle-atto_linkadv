@@ -165,7 +165,7 @@ Y.namespace('M.atto_linkadv').Button = Y.Base.create('button', Y.M.editor_atto.E
         var dialogue = this.getDialogue({
             headerContent: M.util.get_string('createlink', COMPONENTNAME),
             focusAfterHide: true,
-            width: 'auto',
+            width: 360,
             focusOnShowSelector: SELECTORS.URLINPUT
         });
 
