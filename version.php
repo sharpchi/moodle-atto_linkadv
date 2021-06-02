@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020041401;
+$plugin->version   = 2020041402;
 $plugin->requires  = 2017111302;
 $plugin->component = 'atto_linkadv';
 $plugin->release = '3.8.0';
