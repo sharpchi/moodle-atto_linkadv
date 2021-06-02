@@ -3,7 +3,7 @@ Feature: Add links to Atto
   To write rich text - I need to add links.
     Background:
         Given I log in as "admin"
-        And the config value "toolbar" of "editor_atto" is set as admin to multiline
+        And the atto_linkadv config value "toolbar" of "editor_atto" is set as admin to multiline
             """
             collapse = collapse
             style1 = title, bold, italic
