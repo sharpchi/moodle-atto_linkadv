@@ -35,9 +35,9 @@ Feature: Add links to Atto with and ID and class
     Scenario: Insert links with ID and class
         Given I log in as "teacher"
         And I am on "Test" course homepage with editing mode on
-        And I add a "label" to section "1"
-        And I set the field "Label text" to "Super cool"
-        And I select the text in the "Label text" Atto editor
+        And I add a "Text and media area" to section "1"
+        And I set the field "Text" to "Super cool"
+        And I select the text in the "Text" Atto editor
         And I click on "LinkAdv" "button"
         And I set the field "Enter a URL" to "https://nolink.nolink"
         And I click on "Advanced" "link" in the ".atto_form" "css_element"

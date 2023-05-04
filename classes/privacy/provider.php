@@ -24,8 +24,6 @@
 
 namespace atto_linkadv\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Privacy Subsystem for atto_link implementing null_provider.
  *
