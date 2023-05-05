@@ -87,7 +87,8 @@ var COMPONENTNAME = 'atto_linkadv',
                     '</div>' +
                 '{{/if}}' +
                 '<div class="form-check">' +
-                    '<input type="checkbox" class="form-check-input {{CSS.NEWWINDOW}}" id="{{elementid}}_{{CSS.NEWWINDOW}}"/>' +
+                    '<input type="checkbox" class="form-check-input {{CSS.NEWWINDOW}}" ' +
+                        'id="{{elementid}}_{{CSS.NEWWINDOW}}"/>' +
                     '<label class="form-check-label" for="{{elementid}}_{{CSS.NEWWINDOW}}">' +
                     '{{get_string "openinnewwindow" component}}' +
                     '</label>' +
