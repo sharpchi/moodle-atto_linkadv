@@ -38,7 +38,7 @@ jobs:
             moodle-branch: 'MOODLE_401_STABLE'
             database: mariadb
           - php: '7.4'
-            moodle-branch: 'MOODLE_400_STABLE'
+            moodle-branch: 'MOODLE_401_STABLE'
             database: pgsql
     steps:
       - name: Check out repository code
@@ -105,7 +105,7 @@ jobs:
 
       - name: Grunt
         if: ${{ always() }}
-        run: moodle-plugin-ci grunt --max-lint-warnings 0
+        run: moodle-plugin-ci grunt -t shifter --max-lint-warnings 0
 
       - name: PHPUnit tests
         if: ${{ always() }}
