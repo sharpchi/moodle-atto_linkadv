@@ -35,9 +35,10 @@ function atto_linkadv_strings_for_js() {
         'enterurl',
         'browserepositories',
         'openinnewwindow',
+        'texttodisplay',
         'enterid',
         'enterclass',
         'link',
-        'advanced'
+        'advanced',
       ], 'atto_linkadv');
 }

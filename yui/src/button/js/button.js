@@ -15,7 +15,8 @@
 
 /*
  * @package    atto_linkadv
- * @author     Mark Sharp <m.sharp@chi.ac.uk>
+ * @author     Mark Sharp <mark.sharp@solent.ac.uk>
+ * @copyright  2024 Southampton Solent University {@link www.solent.ac.uk}
  * @copyright  2017 University of Chichester {@link www.chi.ac.uk}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -38,20 +39,23 @@ var COMPONENTNAME = 'atto_linkadv',
         ADVANCED: 'ADVANCED'
     },
     CSS = {
-        URLINPUT: 'atto_linkadv_url_entry',
         NEWWINDOW: 'atto_linkadv_openinnewwindow',
-        IDINPUT: 'atto_linkadv_id_entry',
-        CLASSINPUT: 'atto_linkadv_class_entry',
+        URLINPUT: 'atto_linkadv_urlentry',
+        URLTEXT: 'atto_link_urltext',
+        IDINPUT: 'atto_linkadv_identry',
+        CLASSINPUT: 'atto_linkadv_classentry',
         LINK: TABS.LINK.toLowerCase(),
         ADVANCED: TABS.ADVANCED.toLowerCase(),
-        FILEPICKER: 'atto_linkadv_filepicker'
+        LINKBROWSER: 'openlinkbrowser'
     },
     SELECTORS = {
-        URLINPUT: '.' + CSS.URLINPUT,
         NEWWINDOW: '.' + CSS.NEWWINDOW,
+        URLINPUT: '.' + CSS.URLINPUT,
+        URLTEXT: '.' + CSS.URLTEXT,
+        SUBMIT: '.submit',
+        LINKBROWSER: '.' + CSS.LINKBROWSER,
         IDINPUT: '.' + CSS.IDINPUT,
-        CLASSINPUT: '.' + CSS.CLASSINPUT,
-        FILEPICKER: '.' + CSS.FILEPICKER
+        CLASSINPUT: '.' + CSS.CLASSINPUT
     },
     TEMPLATE = '' +
     '<form class="atto_form">' +
@@ -69,13 +73,18 @@ var COMPONENTNAME = 'atto_linkadv',
         '</ul>' +
         '<div class="root tab-content">' +
             '<div data-type="{{CSS.LINK}}" class="tab-pane active" id="{{elementid}}_{{CSS.LINK}}">' +
+                '<div class="mb-1">' +
+                    '<label for="{{elementid}}_atto_linkadv_urltext">{{get_string "texttodisplay" component}}</label>' +
+                    '<input class="form-control fullwidth {{CSS.URLTEXT}}" type="text" ' +
+                    'id="{{elementid}}_atto_linkadv_urltext" size="32"/>' +
+                '</div>' +
                 '{{#if showFilepicker}}' +
                     '<label for="{{elementid}}_atto_linkadv_urlentry">{{get_string "enterurl" component}}</label>' +
                     '<div class="input-group input-append w-100 mb-1">' +
                         '<input class="form-control url {{CSS.URLINPUT}}" type="url" ' +
                         'id="{{elementid}}_atto_linkadv_urlentry"/>' +
                         '<span class="input-group-append">' +
-                            '<button class="btn btn-secondary {{CSS.FILEPICKER}}" type="button">' +
+                            '<button class="btn btn-secondary {{CSS.LINKBROWSER}}" type="button">' +
                             '{{get_string "browserepositories" component}}</button>' +
                         '</span>' +
                     '</div>' +
@@ -127,6 +136,22 @@ Y.namespace('M.atto_linkadv').Button = Y.Base.create('button', Y.M.editor_atto.E
      * @private
      */
     _content: null,
+
+    /**
+     * Text to display has value or not.
+     * @property _hasTextToDisplay
+     * @type Boolean
+     * @private
+     */
+    _hasTextToDisplay: false,
+
+    /**
+     * User has selected plain text or not.
+     * @property _hasPlainTextSelected
+     * @type Boolean
+     * @private
+     */
+    _hasPlainTextSelected: false,
 
     initializer: function() {
         // Add the link button first.
@@ -192,7 +217,9 @@ Y.namespace('M.atto_linkadv').Button = Y.Base.create('button', Y.M.editor_atto.E
             url,
             target,
             id,
-            aclass;
+            aclass,
+            textToDisplay,
+            title;
 
         // Note this is a document fragment and YUI doesn't like them.
         if (!selectednode) {
@@ -205,10 +232,17 @@ Y.namespace('M.atto_linkadv').Button = Y.Base.create('button', Y.M.editor_atto.E
             this._currentSelection = this.get('host').getSelectionFromNode(anchornode);
             url = anchornode.getAttribute('href');
             target = anchornode.getAttribute('target');
+            textToDisplay = anchornode.get('innerText');
+            title = anchornode.getAttribute('title');
             id = anchornode.getAttribute('id');
             aclass = anchornode.getAttribute('class');
             if (url !== '') {
                 this._content.one(SELECTORS.URLINPUT).setAttribute('value', url);
+            }
+            if (textToDisplay !== '') {
+                this._content.one(SELECTORS.URLTEXT).set('value', textToDisplay);
+            } else if (title !== '') {
+                this._content.one(SELECTORS.URLTEXT).set('value', title);
             }
             if (target === '_blank') {
                 this._content.one(SELECTORS.NEWWINDOW).setAttribute('checked', 'checked');
@@ -223,6 +257,14 @@ Y.namespace('M.atto_linkadv').Button = Y.Base.create('button', Y.M.editor_atto.E
             }
             if (aclass !== '') {
                 this._content.one(SELECTORS.CLASSINPUT).setAttribute('value', aclass);
+            }
+        } else {
+            // User is selecting some text before clicking on the Link button.
+            textToDisplay = this._getTextSelection();
+            if (textToDisplay !== '') {
+                this._hasTextToDisplay = true;
+                this._hasPlainTextSelected = true;
+                this._content.one(SELECTORS.URLTEXT).set('value', textToDisplay);
             }
         }
     },
@@ -281,7 +323,7 @@ Y.namespace('M.atto_linkadv').Button = Y.Base.create('button', Y.M.editor_atto.E
             idvalue = '';
         }
         if (idvalue !== '') {
-            // id value should not have any spaces
+            // The id value should not have any spaces.
             idvalue = idvalue.trim();
             idvalue = idvalue.replace(/ /g, '-');
             if (value === '') {
@@ -290,7 +332,7 @@ Y.namespace('M.atto_linkadv').Button = Y.Base.create('button', Y.M.editor_atto.E
         }
 
         if (aclassvalue !== '' && value === '') {
-            value = '#'; // add a dummy value for now.
+            value = '#'; // Add a dummy value for now.
         }
 
         if (value !== '') {
@@ -324,14 +366,23 @@ Y.namespace('M.atto_linkadv').Button = Y.Base.create('button', Y.M.editor_atto.E
             link,
             selectednode,
             target,
-            anchornodes;
+            anchornodes,
+            isUpdating,
+            urlText,
+            textToDisplay;
 
         this.editor.focus();
         host.setSelection(this._currentSelection);
+        isUpdating = !this._currentSelection[0].collapsed;
+        urlText = this._content.one(SELECTORS.URLTEXT);
+        textToDisplay = urlText.get('value').replace(/(<([^>]+)>)/gi, "").trim();
+        if (textToDisplay === '') {
+            textToDisplay = url;
+        }
 
-        if (this._currentSelection[0].collapsed) {
+        if (!isUpdating) {
             // Firefox cannot add links when the selection is empty so we will add it manually.
-            link = Y.Node.create('<a>' + url + '</a>');
+            link = Y.Node.create('<a>' + textToDisplay + '</a>');
             link.setAttribute('href', url);
             link.setAttribute('id', id);
             link.setAttribute('class', aclass);
@@ -339,8 +390,33 @@ Y.namespace('M.atto_linkadv').Button = Y.Base.create('button', Y.M.editor_atto.E
             selectednode = host.insertContentAtFocusPoint(link.get('outerHTML'));
             host.setSelection(host.getSelectionFromNode(selectednode));
         } else {
-            document.execCommand('unlink', false, null);
-            document.execCommand('createLink', false, url);
+            if (Y.UA.gecko > 0) {
+                // For Firefox / Gecko we need to wrap the selection in a span so we can surround it with an anchor.
+                // This relates to https://bugzilla.mozilla.org/show_bug.cgi?id=1906559.
+                var originalSelection = document.getSelection();
+                var wrapper = document.createElement('span');
+                wrapper.setAttribute('data-wrapper', '');
+                wrapper.style.display = 'inline';
+
+                var i;
+                for (i = 0; i < originalSelection.rangeCount; i++) {
+                    originalSelection.getRangeAt(i).surroundContents(wrapper);
+                }
+                host.setSelection(host.getSelectionFromNode(Y.one(wrapper)));
+
+                document.execCommand('unlink', false, null);
+                document.execCommand('createLink', false, url);
+
+                var anchorNode = wrapper.parentNode;
+                wrapper.children.forEach(function(child) {
+                    anchorNode.appendChild(child);
+                });
+                wrapper.remove();
+
+            } else {
+                document.execCommand('unlink', false, null);
+                document.execCommand('createLink', false, url);
+            }
 
             // Now set the target.
             selectednode = host.getSelectionParentNode();
@@ -359,6 +435,17 @@ Y.namespace('M.atto_linkadv').Button = Y.Base.create('button', Y.M.editor_atto.E
                 anchornode.setAttribute('target', '_blank');
             } else {
                 anchornode.removeAttribute('target');
+            }
+            if (isUpdating && textToDisplay) {
+                // The 'createLink' command do not allow to set the custom text to display. So we need to do it here.
+                if (this._hasPlainTextSelected) {
+                    // Only replace the innerText if the user has not selected any element or just the plain text.
+                    anchornode.set('innerText', textToDisplay);
+                } else {
+                    // The user has selected another element to add the hyperlink, like an image.
+                    // We should add the title attribute instead of replacing the innerText of the hyperlink.
+                    anchornode.setAttribute('title', textToDisplay);
+                }
             }
 
             if (id !== '') {
@@ -429,9 +516,12 @@ Y.namespace('M.atto_linkadv').Button = Y.Base.create('button', Y.M.editor_atto.E
             CSS: CSS
         }));
 
-        this._content.one('.submit').on('click', this._setLink, this);
+        this._content.one(SELECTORS.URLINPUT).on('keyup', this._updateTextToDisplay, this);
+        this._content.one(SELECTORS.URLINPUT).on('change', this._updateTextToDisplay, this);
+        this._content.one(SELECTORS.URLTEXT).on('keyup', this._setTextToDisplayState, this);
+        this._content.one(SELECTORS.SUBMIT).on('click', this._setLink, this);
         if (canShowFilepicker) {
-            this._content.one(SELECTORS.FILEPICKER).on('click', function(e) {
+            this._content.one(SELECTORS.LINKBROWSER).on('click', function(e) {
                 e.preventDefault();
                 this.get('host').showFilepicker('link', this._filepickerCallback, this);
             }, this);
@@ -454,7 +544,6 @@ Y.namespace('M.atto_linkadv').Button = Y.Base.create('button', Y.M.editor_atto.E
             elementid: this.get('host').get('elementid'),
             component: COMPONENTNAME,
             showFilepicker: canShowFilepicker,
-            // helpStrings: this.get('help'),
             CSS: CSS
         }, extra);
     },
@@ -480,10 +569,10 @@ Y.namespace('M.atto_linkadv').Button = Y.Base.create('button', Y.M.editor_atto.E
                     // would then be unlinked too.
                     nodes.each(function(node) {
                         // We need to select the whole anchor node for this to work in some browsers.
-                        // We only need to search up because getSeletedNodes returns all Nodes in the selection.
+                        // We only need to search up because getSelectedNodes returns all Nodes in the selection.
                         var anchor = node.ancestor('a', true);
                         if (anchor) {
-                            // Set the selection to the whole of the first anchro.
+                            // Set the selection to the whole of the first anchor.
                             host.setSelection(host.getSelectionFromNode(anchor));
 
                             // Call the browser unlink.
@@ -502,5 +591,62 @@ Y.namespace('M.atto_linkadv').Button = Y.Base.create('button', Y.M.editor_atto.E
                 this.markUpdated();
             }
         }
+    },
+     /**
+     * Set the current text to display state.
+     *
+     * @method _setTextToDisplayState
+     * @private
+     */
+     _setTextToDisplayState: function() {
+        var urlText,
+            urlTextVal;
+        urlText = this._content.one(SELECTORS.URLTEXT);
+        urlTextVal = urlText.get('value');
+        if (urlTextVal !== '') {
+            this._hasTextToDisplay = true;
+        } else {
+            this._hasTextToDisplay = false;
+        }
+    },
+    /**
+     * Update the text to display if the user does not provide the custom text.
+     *
+     * @method _updateTextToDisplay
+     * @private
+     */
+    _updateTextToDisplay: function() {
+        var urlEntry,
+            urlText,
+            urlEntryVal;
+        urlEntry = this._content.one(SELECTORS.URLINPUT);
+        urlText = this._content.one(SELECTORS.URLTEXT);
+        urlEntryVal = urlEntry.get('value');
+        if (!this._hasTextToDisplay) {
+            urlText.set('value', urlEntryVal);
+        }
+    },
+
+    /**
+     * Get only the selected text.
+     * In some cases, window.getSelection() is not run as expected. We should only get the text value
+     * For ex: <img src="" alt="XYZ">Some text here
+     *          window.getSelection() will return XYZSome text here
+     *
+     * @returns {string} Selected text
+     * @private
+     */
+    _getTextSelection: function() {
+        var selText = '';
+        var sel = window.getSelection();
+        var rangeCount = sel.rangeCount;
+        if (rangeCount) {
+            var rangeTexts = [];
+            for (var i = 0; i < rangeCount; ++i) {
+                rangeTexts.push('' + sel.getRangeAt(i));
+            }
+            selText = rangeTexts.join('');
+        }
+        return selText;
     }
 });

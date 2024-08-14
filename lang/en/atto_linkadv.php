@@ -41,4 +41,6 @@ $string['openinnewwindow'] = 'Open in new window';
 $string['pluginname'] = 'LinkAdv';
 $string['privacy:metadata'] = 'The atto_linkadv plugin does not store any personal data.';
 
+$string['texttodisplay'] = 'Text to display';
+
 $string['unlink'] = 'Unlink';
