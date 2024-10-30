@@ -38,7 +38,6 @@ Feature: Add links to Atto with and ID and class
     And I press "Add an activity or resource"
     When I click on "Add a new Text and media area" "link" in the "Add an activity or resource" "dialogue"
     And I set the following fields to these values:
-      | Title in course index | Super cool |
       | Text                  | Super cool |
     And I select the text in the "Text" Atto editor
     And I click on "LinkAdv" "button"
