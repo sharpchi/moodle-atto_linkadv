@@ -38,7 +38,8 @@ var COMPONENTNAME = 'atto_linkadv',
         LINK: 'LINK',
         ADVANCED: 'ADVANCED'
     },
-    LACSS = {
+    // eslint-disable-next-line no-redeclare
+    CSS = {
         NEWWINDOW: 'atto_linkadv_openinnewwindow',
         URLINPUT: 'atto_linkadv_urlentry',
         URLTEXT: 'atto_link_urltext',
@@ -49,66 +50,66 @@ var COMPONENTNAME = 'atto_linkadv',
         LINKBROWSER: 'openlinkbrowser'
     },
     SELECTORS = {
-        NEWWINDOW: '.' + LACSS.NEWWINDOW,
-        URLINPUT: '.' + LACSS.URLINPUT,
-        URLTEXT: '.' + LACSS.URLTEXT,
+        NEWWINDOW: '.' + CSS.NEWWINDOW,
+        URLINPUT: '.' + CSS.URLINPUT,
+        URLTEXT: '.' + CSS.URLTEXT,
         SUBMIT: '.submit',
-        LINKBROWSER: '.' + LACSS.LINKBROWSER,
-        IDINPUT: '.' + LACSS.IDINPUT,
-        CLASSINPUT: '.' + LACSS.CLASSINPUT
+        LINKBROWSER: '.' + CSS.LINKBROWSER,
+        IDINPUT: '.' + CSS.IDINPUT,
+        CLASSINPUT: '.' + CSS.CLASSINPUT
     },
     TEMPLATE = '' +
     '<form class="atto_form">' +
         '<ul class="root nav nav-tabs" role="tablist">' +
-            '<li data-type="{{LACSS.LINK}}" class="nav-item">' +
-                '<a class="nav-link active" href="#{{elementid}}_{{LACSS.LINK}}" role="tab" data-toggle="tab">' +
+            '<li data-type="{{CSS.LINK}}" class="nav-item">' +
+                '<a class="nav-link active" href="#{{elementid}}_{{CSS.LINK}}" role="tab" data-toggle="tab">' +
                     '{{get_string "link" component}}' +
                 '</a>' +
             '</li>' +
-            '<li data-type="{{LACSS.ADVANCED}}" class="nav-item">' +
-                '<a class="nav-link" href="#{{elementid}}_{{LACSS.ADVANCED}}" role="tab" data-toggle="tab">' +
+            '<li data-type="{{CSS.ADVANCED}}" class="nav-item">' +
+                '<a class="nav-link" href="#{{elementid}}_{{CSS.ADVANCED}}" role="tab" data-toggle="tab">' +
                     '{{get_string "advanced" component}}' +
                 '</a>' +
             '</li>' +
         '</ul>' +
         '<div class="root tab-content">' +
-            '<div data-type="{{LACSS.LINK}}" class="tab-pane active" id="{{elementid}}_{{LACSS.LINK}}">' +
+            '<div data-type="{{CSS.LINK}}" class="tab-pane active" id="{{elementid}}_{{CSS.LINK}}">' +
                 '<div class="mb-1">' +
                     '<label for="{{elementid}}_atto_linkadv_urltext">{{get_string "texttodisplay" component}}</label>' +
-                    '<input class="form-control fullwidth {{LACSS.URLTEXT}}" type="text" ' +
+                    '<input class="form-control fullwidth {{CSS.URLTEXT}}" type="text" ' +
                     'id="{{elementid}}_atto_linkadv_urltext" size="32"/>' +
                 '</div>' +
                 '{{#if showFilepicker}}' +
                     '<label for="{{elementid}}_atto_linkadv_urlentry">{{get_string "enterurl" component}}</label>' +
                     '<div class="input-group input-append w-100 mb-1">' +
-                        '<input class="form-control url {{LACSS.URLINPUT}}" type="url" ' +
+                        '<input class="form-control url {{CSS.URLINPUT}}" type="url" ' +
                         'id="{{elementid}}_atto_linkadv_urlentry"/>' +
                         '<span class="input-group-append">' +
-                            '<button class="btn btn-secondary {{LACSS.LINKBROWSER}}" type="button">' +
+                            '<button class="btn btn-secondary {{CSS.LINKBROWSER}}" type="button">' +
                             '{{get_string "browserepositories" component}}</button>' +
                         '</span>' +
                     '</div>' +
                 '{{else}}' +
                     '<div class="mb-1">' +
                         '<label for="{{elementid}}_atto_linkadv_urlentry">{{get_string "enterurl" component}}</label>' +
-                        '<input class="form-control fullwidth url {{LACSS.URLINPUT}}" type="url" ' +
+                        '<input class="form-control fullwidth url {{CSS.URLINPUT}}" type="url" ' +
                         'id="{{elementid}}_atto_linkadv_urlentry" size="32"/>' +
                     '</div>' +
                 '{{/if}}' +
                 '<div class="form-check">' +
-                    '<input type="checkbox" class="form-check-input {{LACSS.NEWWINDOW}}" ' +
-                        'id="{{elementid}}_{{LACSS.NEWWINDOW}}"/>' +
-                    '<label class="form-check-label" for="{{elementid}}_{{LACSS.NEWWINDOW}}">' +
+                    '<input type="checkbox" class="form-check-input {{CSS.NEWWINDOW}}" ' +
+                        'id="{{elementid}}_{{CSS.NEWWINDOW}}"/>' +
+                    '<label class="form-check-label" for="{{elementid}}_{{CSS.NEWWINDOW}}">' +
                     '{{get_string "openinnewwindow" component}}' +
                     '</label>' +
                 '</div>' +
             '</div>' +
-            '<div data-type="{{LACSS.ADVANCED}}" class="tab-pane" id="{{elementid}}_{{LACSS.ADVANCED}}">' +
-                '<label for="{{elementid}}_{{LACSS.IDINPUT}}">{{get_string "enterid" component}}</label>' +
-                '<input class="form-control fullwidth {{LACSS.IDINPUT}}" type="text" id="{{elementid}}_{{LACSS.IDINPUT}}" />' +
-                '<label for="{{elementid}}_{{LACSS.CLASSINPUT}}">{{get_string "enterclass" component}}</label>' +
-                '<input class="form-control fullwidth {{LACSS.CLASSINPUT}}" ' +
-                    'type="text" id="{{elementid}}_{{LACSS.CLASSINPUT}}" />' +
+            '<div data-type="{{CSS.ADVANCED}}" class="tab-pane" id="{{elementid}}_{{CSS.ADVANCED}}">' +
+                '<label for="{{elementid}}_{{CSS.IDINPUT}}">{{get_string "enterid" component}}</label>' +
+                '<input class="form-control fullwidth {{CSS.IDINPUT}}" type="text" id="{{elementid}}_{{CSS.IDINPUT}}" />' +
+                '<label for="{{elementid}}_{{CSS.CLASSINPUT}}">{{get_string "enterclass" component}}</label>' +
+                '<input class="form-control fullwidth {{CSS.CLASSINPUT}}" ' +
+                    'type="text" id="{{elementid}}_{{CSS.CLASSINPUT}}" />' +
             '</div>' +
         '</div>' +
         '<div class="mdl-align">' +
@@ -460,8 +461,6 @@ Y.namespace('M.atto_linkadv').Button = Y.Base.create('button', Y.M.editor_atto.E
                 anchornode.removeAttribute('class');
             }
         }, this);
-
-        return selectednode;
     },
 
     /**
