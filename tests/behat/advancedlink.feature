@@ -35,8 +35,11 @@ Feature: Add links to Atto with and ID and class
   Scenario: Insert links with ID and class
     Given I log in as "teacher"
     And I am on "Test" course homepage with editing mode on
-    And I add a "Text and media area" to section "1"
-    And I set the field "Text" to "Super cool"
+    And I press "Add an activity or resource"
+    When I click on "Add a new Text and media area" "link" in the "Add an activity or resource" "dialogue"
+    And I set the following fields to these values:
+      | Title in course index | Super cool |
+      | Text                  | Super cool |
     And I select the text in the "Text" Atto editor
     And I click on "LinkAdv" "button"
     And I set the field "Enter a URL" to "https://nolink.nolink"
